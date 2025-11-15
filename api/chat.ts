@@ -1,3 +1,4 @@
+//api/chat.ts
 // import type { VercelRequest, VercelResponse } from '@vercel/node';
 import Groq from 'groq-sdk';
 
@@ -6,6 +7,16 @@ const groq = new Groq({
 });
 
 export default async function handler(req: any, res: any) {
+    // ✅ CORS 허용 — 로컬 환경에서 Vercel 도메인 호출 가능하게
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  
+  // Vercel이 OPTIONS preflight 요청을 자동으로 보냄 → 미리 처리해줘야 함
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
+
   if (req.method !== 'POST') {
     res.status(405).json({ error: 'Method not allowed' });
     return;

@@ -1,3 +1,4 @@
+//src/AIGuide.tsx
 import { useState, useEffect, useRef } from 'react';
 import { Send, User, AlertTriangle, Package, Home, Navigation } from 'lucide-react';
 import { supabase } from '../lib/supabase';
@@ -8,6 +9,11 @@ interface Message {
   content: string;
   timestamp: Date;
 }
+
+// 🔹 로컬 개발일 때만 Vercel 도메인 사용
+const API_BASE_URL = import.meta.env.DEV
+  ? 'https://paju-shelter.vercel.app' // 본인 Vercel 도메인
+  : ''; // 배포 환경에서는 같은 도메인의 /api/chat 사용
 
 export default function AIGuide() {
   const [messages, setMessages] = useState<Message[]>([
@@ -41,24 +47,38 @@ export default function AIGuide() {
 
   /** 🔥 서버리스 API 호출 */
   const getAIResponse = async (userMessage: string): Promise<string> => {
-    try {
-      const response = await fetch('/api/chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          messages: [{ role: 'user', content: userMessage }],
-        }),
-      });
+  try {
+    // ✅ 지금 페이지가 로컬 개발 환경인지 체크
+    const isLocal =
+      window.location.hostname === 'localhost' ||
+      window.location.hostname === '127.0.0.1';
 
-      if (!response.ok) throw new Error('API error');
+    // ✅ 로컬이면 Vercel 도메인으로 직접 호출, 배포 환경이면 자기 도메인의 /api/chat 사용
+    const baseUrl = isLocal ? 'https://paju-shelter.vercel.app' : '';
 
-      const data = await response.json();
-      return data.reply as string;
-    } catch (e) {
-      console.error(e);
-      return '죄송합니다. 현재 AI 서버에 문제가 발생했습니다. 잠시 후 다시 시도해주세요.';
+    const url = `${baseUrl}/api/chat`;
+    console.log('[AIGuide] calling:', url);
+
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        messages: [{ role: 'user', content: userMessage }],
+      }),
+    });
+
+    if (!response.ok) {
+      console.error('API status:', response.status, await response.text());
+      throw new Error('API error');
     }
-  };
+
+    const data = await response.json();
+    return data.reply as string;
+  } catch (e) {
+    console.error(e);
+    return '죄송합니다. 현재 AI 서버에 문제가 발생했습니다. 잠시 후 다시 시도해주세요.';
+  }
+};
 
   /** 🔥 메시지 전송 */
   const handleSend = async () => {
