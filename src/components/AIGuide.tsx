@@ -48,18 +48,7 @@ export default function AIGuide() {
   /** 🔥 서버리스 API 호출 */
   const getAIResponse = async (userMessage: string): Promise<string> => {
   try {
-    // ✅ 지금 페이지가 로컬 개발 환경인지 체크
-    const isLocal =
-      window.location.hostname === 'localhost' ||
-      window.location.hostname === '127.0.0.1';
-
-    // ✅ 로컬이면 Vercel 도메인으로 직접 호출, 배포 환경이면 자기 도메인의 /api/chat 사용
-    const baseUrl = isLocal ? 'https://paju-shelter.vercel.app' : '';
-
-    const url = `${baseUrl}/api/chat`;
-    console.log('[AIGuide] calling:', url);
-
-    const response = await fetch(url, {
+    const response = await fetch(`${API_BASE_URL}/api/chat`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -67,10 +56,7 @@ export default function AIGuide() {
       }),
     });
 
-    if (!response.ok) {
-      console.error('API status:', response.status, await response.text());
-      throw new Error('API error');
-    }
+    if (!response.ok) throw new Error('API error');
 
     const data = await response.json();
     return data.reply as string;
