@@ -11,7 +11,7 @@ function getRuleBasedAnswer(userMessage: string): string | null {
   const msg = userMessage.replace(/\s/g, '').toLowerCase(); // 공백 제거
 
   // ① 지진 행동 요령
-  if (msg.includes('행동 대처')) {
+  if (msg.includes('행동 대처') || msg.includes('요령')) {
     return (
       '지진이 발생하면 우선 머리와 몸을 보호하는 것이 가장 중요합니다.\n' +
       '실내에서는 튼튼한 책상 아래로 들어가 머리와 목을 팔로 감싸고, 흔들림이 멈출 때까지 이동하지 마세요.\n' +
