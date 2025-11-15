@@ -108,7 +108,8 @@ export default async function handler(req: any, res: any) {
         '답변은 한국어로 하고, 너무 길지 않게 핵심 위주로 정리해. ' +
         '마크다운 문법(별표 **, # 제목, - 목록, ``` 코드블록 등)은 절대 사용하지 말고, ' +
         '일반 문장이나 1) 2) 3) 형식의 번호 정도만 사용해. ' +
-        '같은 내용을 반복해서 늘어놓지 말고, 중복되는 문장은 쓰지 마.',
+        '같은 내용을 반복해서 늘어놓지 말고, 중복되는 문장은 쓰지 마.'+
+        '반드시 존댓말을 사용해.',
     };
 
     const completion = await groq.chat.completions.create({
