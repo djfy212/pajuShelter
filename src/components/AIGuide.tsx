@@ -1,4 +1,4 @@
-//src/AIGuide.tsx
+//src/components/AIGuide.tsx
 import { useState, useEffect, useRef } from 'react';
 import { Send, User, AlertTriangle, Package, Home, Navigation } from 'lucide-react';
 import { supabase } from '../lib/supabase';
